@@ -11,14 +11,9 @@ class Bank:
     def deposit(self):
         for _ in range(100):
             amount = random.randint(50, 500)
-            self.lock.acquire()
-            try:
+            with self.lock:
                 self.balance += amount
-                if self.balance >= 500 and self.lock.locked():
-                    self.lock.release()
                 print(f"Пополнение: {amount}. Баланс: {self.balance}")
-            finally:
-                self.lock.release()
             time.sleep(0.001)
 
     def take(self):
@@ -32,7 +27,6 @@ class Bank:
                     print(f"Снятие: {amount}. Баланс: {self.balance}")
                 else:
                     print("Запрос отклонён, недостаточно средств")
-                    return
             finally:
                 self.lock.release()
             time.sleep(0.001)
@@ -50,4 +44,5 @@ th1.join()
 th2.join()
 
 print(f'Итоговый баланс: {bk.balance}')
+
 
